@@ -1,0 +1,40 @@
+<html>
+
+<head>
+<title>Rilevazione Dati Prod. TS</title>
+<link type="text/css" rel="stylesheet" href="it/tonini/thip/produzione/raccoltaDati/css/finestra_disambiguazione_reparto.css"></link>
+</head>
+<body leftmargin="0" rightmargin="0" topmargin="0" bottommargin="0">
+
+	<form name="RilevDatiPrdTSForm" style="height: 100%; width: 100%">
+
+		<!--<table class="maintable" style="height:140px"> -->
+		<!--Fix 13264 -->
+		<!--Fix 13574 -->
+		<input name="Note" type="Hidden" />
+		<input name="IdOperatore" type="Hidden" />
+		<input name="BollaLavorazione" type="Hidden" />
+		<table class="repartoTable">
+			<!--Fix 13264 -->
+			<!--Fix 13574 -->
+			<tr valign="top">
+				<td colspan="2" style="height: 15px"></td>
+				<!-- Fix 13175 -->
+			</tr>
+			<tr valign="top">
+				<td width="15px"></td>
+				<td>
+					<table cellpadding="3" cellspacing="3">
+						<tr style="display:none">
+							<td colspan="2"><label id="Titolo" style="font-weight:bold;">SCELTA REPARTO</label></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3"><label class="labelError" id="ErroriList"></label></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
