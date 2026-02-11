@@ -20,7 +20,6 @@ import com.thera.thermfw.web.WebElement;
 import com.thera.thermfw.web.WebJSTypeList;
 
 import it.softre.thip.produzione.raccoltaDati.YPassDatiMacc;
-import it.thera.thip.base.articolo.Articolo;
 import it.thera.thip.base.azienda.Azienda;
 import it.thera.thip.base.azienda.Reparto;
 import it.thera.thip.base.generale.ParametroPsn;
@@ -57,7 +56,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		super.writeHeadElements(out);
 		String action = (String) getRequest().getAttribute("Action");
 		if(action != null && action.equals(RilevDatiPrdTSFormActionAdapter.MONITOR)) {
-			out.println(WebJSTypeList.getImportForCSS("it/thera/thip/logisticaLight/css/extra/datatables.min.css", getRequest()));
+			out.println(WebJSTypeList.getImportForCSS("it/tonini/thip/assets/DataTables-1.10.9/css/datatables.min.css", getRequest()));
 			out.println(WebJSTypeList.getImportForJSLibrary("it/thera/thip/logisticaLight/js/extra/jquery.min.js", getRequest()));
 			out.println(WebJSTypeList.getImportForJSLibrary("it/tonini/thip/produzione/raccoltaDati/js/extra/jquery.dataTables.min.js", getRequest()));
 		}
@@ -149,6 +148,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		out.println("</table>");
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void displayDichiarazioneInCorso(JspWriter out, RilevDatiPrdTS bo) throws IOException {
 		impostaAttributiBOPers(bo);		//Fix 42131
 
@@ -200,6 +200,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Qta_UM")) + "</th>");
 		out.println(getHTMLTitoloDichInCorsoPers04()); //40458
 		out.println(getHTMLTitoloDichInCorsoPers05()); //40458
+		out.println("    <th class=\"cell\" >Azioni</th>");
 		out.println("  </tr>");
 		out.println("</thead><tbody>");
 		//Fix 30298 fine
@@ -362,28 +363,28 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 					out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);ripresaAction(" + index + ")\" style=" + width + ">" + ripresaBut + "</button></td>"); //Fix 13574 //Fix 30236
 					//Fix 24211 fine
 				}
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdCausaleRilevazione" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdCausaleRilevazione()) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"IdCausaleRilevazione" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdCausaleRilevazione()) + "' />");
 				//if (testata.getTipoDichiarazione() != PersDatiPrdCausaleRilev.NON_PRODUTTIVA) {//Fix 16741
 				//if (testata.getTipoDichiarazione() != PersDatiPrdCausaleRilev.NON_PRODUTTIVA && testata.getTipoDichiarazione() != PersDatiPrdCausaleRilev.FERMO) {//Fix 16741
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' /></td>"); //Fix 14725
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdArticolo()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML(annoOrd) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML(numOrd) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' />"); //Fix 14725
+				out.println("<input type =\"hidden\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdArticolo()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML(annoOrd) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML(numOrd) + "' />");
 				//Fix 15064 inizio
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML(rigaAtv) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAnnoBolla" + index + "\" value='" + WebElement.formatStringForHTML(annoBolla) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdNumeroBolla" + index + "\" value='" + WebElement.formatStringForHTML(numBolla) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoBolla" + index + "\" value='" + WebElement.formatStringForHTML(tipoBolla) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML(rigaAtv) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdAnnoBolla" + index + "\" value='" + WebElement.formatStringForHTML(annoBolla) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdNumeroBolla" + index + "\" value='" + WebElement.formatStringForHTML(numBolla) + "' />");
+				out.println("<input type =\"hidden\" id=\"TipoBolla" + index + "\" value='" + WebElement.formatStringForHTML(tipoBolla) + "' />");
 				//Fix 15064 fine
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + testata.getTipoRisorsa() + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + testata.getLivelloRisorsa() + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdRisorsa()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(idAmbiente) + "' /></td>"); //Fix 12841
+				out.println("<input type =\"hidden\" id=\"TipoRisorsa" + index + "\" value='" + testata.getTipoRisorsa() + "' />");
+				out.println("<input type =\"hidden\" id=\"LivelloRisorsa" + index + "\" value='" + testata.getLivelloRisorsa() + "' />");
+				out.println("<input type =\"hidden\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML(testata.getIdRisorsa()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(idAmbiente) + "' />"); //Fix 12841
 				//Fix 19104 inizio
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"Quantita" + index + "\" value='" + WebElement.formatStringForHTML(getValue(qtaDaProdurre[0], 2)) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"QuantitaSec" + index + "\" value='" + WebElement.formatStringForHTML(getValue(qtaDaProdurre[1], 2)) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"Quantita" + index + "\" value='" + WebElement.formatStringForHTML(getValue(qtaDaProdurre[0], 2)) + "' />");
+				out.println("<input type =\"hidden\" id=\"QuantitaSec" + index + "\" value='" + WebElement.formatStringForHTML(getValue(qtaDaProdurre[1], 2)) + "' />");
 				//Fix 26907 Inizio
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"Note" + index + "\" value='" + WebElement.formatStringForHTML(note) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"Note" + index + "\" value='" + WebElement.formatStringForHTML(note) + "' />");
 				//Fix 26907 Fine
 				//Fix 19104 fine
 				//}
@@ -444,6 +445,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public int displayProssimeDichInternal(JspWriter out, List prossimeDich, String srcImg, RilevDatiPrdTS bo, int index) throws IOException{ //Fix 23541
 		//Fix 13264 inizio
 		String but = ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "ButInizio"); //Fix 13434
@@ -528,15 +530,15 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 				out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);inizioAction(" + index + ")\" style=\"width: 117px\">" + but + "</button></td>");
 				//Fix 24211 fine
 				//Fix 13264 fine
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' /></td>"); //Fix 14725
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdArticolo()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdAnnoOrdine()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdNumeroOrdine()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdRigaAttivita().toString()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + (bo.getIdMacchina() != null ? listaAttivita.getTipoMacchina() : listaAttivita.getTipoOperatore()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + (bo.getIdMacchina() != null ? listaAttivita.getLivelloMacchina() : listaAttivita.getLivelloOperatore()) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML((bo.getIdMacchina() != null ? listaAttivita.getIdMacchina() : listaAttivita.getIdOperatore())) + "' /></td>");
-				out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdAmbiente()) + "' /></td>");
+				out.println("<input type =\"hidden\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' />"); //Fix 14725
+				out.println("<input type =\"hidden\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdArticolo()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdAnnoOrdine()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdNumeroOrdine()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdRigaAttivita().toString()) + "' />");
+				out.println("<input type =\"hidden\" id=\"TipoRisorsa" + index + "\" value='" + (bo.getIdMacchina() != null ? listaAttivita.getTipoMacchina() : listaAttivita.getTipoOperatore()) + "' />");
+				out.println("<input type =\"hidden\" id=\"LivelloRisorsa" + index + "\" value='" + (bo.getIdMacchina() != null ? listaAttivita.getLivelloMacchina() : listaAttivita.getLivelloOperatore()) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML((bo.getIdMacchina() != null ? listaAttivita.getIdMacchina() : listaAttivita.getIdOperatore())) + "' />");
+				out.println("<input type =\"hidden\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdAmbiente()) + "' />");
 				out.println("   </tr>");
 			}
 			else { //Fix 44763 --inizio
@@ -553,11 +555,6 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 					String bollaLav = bollaCucita.getNumeroRitorno();
 					String descrRilev = "";
 					String numOrdine = bollaCucita.getNumeroBolFmt();
-					String idArticolo = "";
-					String descrArticolo = "";
-					String idMacchina = "";
-					String descMAcchina = null;
-
 					out.println("");
 					out.println("    <td id=\"BollaLavTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(bollaLav) + "<br>" + WebElement.formatStringForHTML(descrRilev) + "</td>");
 					out.println("");
@@ -571,26 +568,26 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 					out.println("");
 					out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);inizioAction(" + index + ")\" style=\"width: 117px\">" + but + "</button></td>");
 
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdCausaleRilevazione" + index + "\" value='" + WebElement.formatStringForHTML(bo.getIdCausaleRilevazione()) + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML("") + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML("") + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML("") + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML("") + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAnnoBolla" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdAnnoBolla()) + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdNumeroBolla" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdNumeroBolla()) + "' /></td>");
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoBolla" + index + "\" value='" + WebElement.formatStringForHTML(""+RilevazioneDatiProdTes.BOLLA_CUCITA) + "' /></td>");
+					out.println("<input type =\"text\" id=\"IdCausaleRilevazione" + index + "\" value='" + WebElement.formatStringForHTML(bo.getIdCausaleRilevazione()) + "' />");
+					out.println("<input type =\"text\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' />");
+					out.println("<input type =\"text\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML("") + "' />");
+					out.println("<input type =\"text\" id=\"IdAnnoOrdine" + index + "\" value='" + WebElement.formatStringForHTML("") + "' />");
+					out.println("<input type =\"text\" id=\"IdNumeroOrdine" + index + "\" value='" + WebElement.formatStringForHTML("") + "' />");
+					out.println("<input type =\"text\" id=\"IdRigaAttivita" + index + "\" value='" + WebElement.formatStringForHTML("") + "' />");
+					out.println("<input type =\"text\" id=\"IdAnnoBolla" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdAnnoBolla()) + "' />");
+					out.println("<input type =\"text\" id=\"IdNumeroBolla" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdNumeroBolla()) + "' />");
+					out.println("<input type =\"text\" id=\"TipoBolla" + index + "\" value='" + WebElement.formatStringForHTML(""+RilevazioneDatiProdTes.BOLLA_CUCITA) + "' />");
 					if(bollaCucita.getLivelloRisorsa() == Risorsa.MATRICOLA) {
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + (bollaCucita.getTipoRisorsa()) + "' /></td>");
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + (bollaCucita.getLivelloRisorsa()) + "' /></td>");
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdRisorsa()) + "' /></td>");
+						out.println("<input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + (bollaCucita.getTipoRisorsa()) + "' />");
+						out.println("<input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + (bollaCucita.getLivelloRisorsa()) + "' />");
+						out.println("<input type =\"text\" id=\"IdRisorsa" + index + "\" value='" + WebElement.formatStringForHTML(bollaCucita.getIdRisorsa()) + "' />");
 					}
 					else {
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + Risorsa.MACCHINE + "' /></td>");
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + Risorsa.MATRICOLA + "' /></td>");
-						out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdRisorsa" + index + "\" value='' /></td>");  
+						out.println("<input type =\"text\" id=\"TipoRisorsa" + index + "\" value='" + Risorsa.MACCHINE + "' />");
+						out.println("<input type =\"text\" id=\"LivelloRisorsa" + index + "\" value='" + Risorsa.MATRICOLA + "' />");
+						out.println("<input type =\"text\" id=\"IdRisorsa" + index + "\" value='' />");  
 					}
-					out.println("    <td class=\"cell\" style=\"display:none\"><input type =\"text\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(bo.getIdAmbiente()) + "' /></td>");
+					out.println("<input type =\"text\" id=\"IdAmbiente" + index + "\" value='" + WebElement.formatStringForHTML(bo.getIdAmbiente()) + "' />");
 					out.println("   </tr>");
 				}
 			} //Fix 44763 --fine
@@ -621,12 +618,14 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 
 	@Override
 	protected String getHTMLCellaDichInCorsoPers01(int index, RilevazioneDatiProdTes testata) {
-		return "<td id=\"DataInzRcsTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(getDataInizioRichiestaStr(testata.getAttivitaEsecutiva()))+"</td>";
+		Date data = getDataInizioRichiesta(testata.getAttivitaEsecutiva());
+		return "<td "+getDataOrderData(data)+" id=\"DataInzRcsTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(getDataInizioRichiestaStr(data))+"</td>";
 	}
 
 	@Override
 	protected String getHTMLCellaProssimeDichPers01(int index, ListaAttivita listaAttivita) {
-		return "<td id=\"DataInzRcsTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(getDataInizioRichiestaStr(listaAttivita.getAttivitaEsecutiva()))+"</td>";
+		Date data = getDataInizioRichiesta(listaAttivita.getAttivitaEsecutiva());
+		return "<td "+getDataOrderData(data)+" id=\"DataInzRcsTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(getDataInizioRichiestaStr(data))+"</td>";
 	}
 
 	@Override
@@ -647,8 +646,8 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 	@Override
 	protected String getHTMLCellaDichInCorsoPers05(int index, RilevazioneDatiProdTes testata) {
 		String str = "";
-		if(testata.getOrdineEsecutivo().getOrdineVendita() != null)
-			str = testata.getOrdineEsecutivo().getOrdineVendita().getNumeroDocumentoFormattato();
+		if(testata.getOrdineEsecutivo().getOrdineVenditaRiga() != null)
+			str = testata.getOrdineEsecutivo().getOrdineVenditaRiga().getTestata().getNumeroDocumentoFormattato();
 		return "<td id=\"OrdineClienteTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(str)+"</td>";
 	}
 
@@ -660,8 +659,8 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 	@Override
 	protected String getHTMLCellaProssimeDichPers05(int index, ListaAttivita listaAttivita) {
 		String str = "";
-		if(listaAttivita.getOrdineEsecutivo().getOrdineVendita() != null)
-			str = listaAttivita.getOrdineEsecutivo().getOrdineVendita().getNumeroDocumentoFormattato();
+		if(listaAttivita.getOrdineEsecutivo().getOrdineVenditaRiga() != null)
+			str = listaAttivita.getOrdineEsecutivo().getOrdineVenditaRiga().getTestata().getNumeroDocumentoFormattato();
 		return "<td id=\"OrdineClienteTD" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(str)+"</td>";
 	}
 
@@ -692,17 +691,28 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		return manico;
 	}
 
-	public String getDataInizioRichiestaStr(AttivitaEsecutiva atv) {
-		DateType dt = new DateType();
+	public Date getDataInizioRichiesta(AttivitaEsecutiva atv) {
 		Date dataInizioRcs = null;
 		if(atv.getDateProgrammate().getStartDate() != null)
 			dataInizioRcs = atv.getDateProgrammate().getStartDate();
 		else
 			dataInizioRcs = atv.getOrdineEsecutivo().getDateRichieste().getStartDate();
+		return dataInizioRcs;
+	}
+
+	public String getDataInizioRichiestaStr(Date dataInizioRcs) {
+		DateType dt = new DateType();
 		String dateStr = "";
 		if(dataInizioRcs != null)
 			dateStr = dt.objectToString(dataInizioRcs);
 		return dateStr;
+	}
+	
+	public String getDataOrderData(java.sql.Date data) {
+	    if (data == null) {
+	        return "";
+	    }
+	    return "data-order=\"" + data.toLocalDate().toString() + "\"";
 	}
 
 	public static String idMacrofamigliaManici() {
