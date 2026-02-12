@@ -59,6 +59,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 			out.println(WebJSTypeList.getImportForCSS("it/tonini/thip/assets/DataTables-1.10.9/css/datatables.min.css", getRequest()));
 			out.println(WebJSTypeList.getImportForJSLibrary("it/thera/thip/logisticaLight/js/extra/jquery.min.js", getRequest()));
 			out.println(WebJSTypeList.getImportForJSLibrary("it/tonini/thip/produzione/raccoltaDati/js/extra/jquery.dataTables.min.js", getRequest()));
+			out.println(WebJSTypeList.getImportForCSS("it/tonini/thip/produzione/raccoltaDati/css/dichiarazione_monitor.css", getRequest()));
 		}
 	}
 
@@ -195,6 +196,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "N_ord_bolla")) + "</th>");
 		out.println(getHTMLTitoloDichInCorsoPers02()); //40458
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Articolo")) + "</th>");
+		out.println("    <th class=\"cell\" >Configurazione</th>");
 		out.println(getHTMLTitoloDichInCorsoPers03()); //40458
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Risorsa")) + "</th>");
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Qta_UM")) + "</th>");
@@ -320,12 +322,8 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 					}else {
 						//Fix 30298 fine	
 						//Fix 33517 -- Inizio
-						if(articolo_Config.equals("")) {
-							out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>");  
-						}else {
-							//out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>");//Fix 33688  
-							out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "<br>" + WebElement.formatStringForHTML(descr_Config) + "</td>");//Fix 33688
-						}
+						out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>");
+						out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descr_Config) + "</td>");
 						//Fix 33517 -- Fine
 					}//Fix 30298 
 					//Fix 23542 Inizio
@@ -397,6 +395,22 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 			displayProssemeDichiarazione(out, bo, index); //Fix 12841      
 		}
 		out.println("</tbody>");
+		out.println("<tfoot>");
+		out.println("<tr>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("<th class='head-filtri'></th>");
+		out.println("</tr>");
+		out.println("</tfoot>");
 		out.println("  </table>");
 		out.println("</td>");
 		out.println("</tr>");
@@ -503,12 +517,8 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 				//Fix 37456 --fine
 				//Fix 14725 -- inizio
 				//Fix 33517 -- Inizio
-				if(articolo_Config.equals("")) {
-					out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>");
-				}else {
-					//out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>"); //Fix 33688
-					out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "<br>" + WebElement.formatStringForHTML(descr_Config) + "</td>");
-				}
+				out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(idArticolo) + "<br>" + WebElement.formatStringForHTML(descrArticolo) + "</td>");
+				out.println("    <td class=\"cell\" nowrap=\"true\" >" + WebElement.formatStringForHTML(articolo_Config) + "<br>" + WebElement.formatStringForHTML(descr_Config) + "</td>");
 				out.println(getHTMLCellaProssimeDichPers03(index, listaAttivita));		//Fix 22513
 				//Fix 33517 -- Fine
 				//Fix 23542 Inizio
@@ -667,7 +677,7 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 	public String getCodiceClienteRagSocStr(OrdineEsecutivo ordEsec) {
 		String str = "";
 		if(ordEsec.getCliente() != null) {
-			str = ordEsec.getCliente().getRagioneSociale() + " - " + ordEsec.getIdCliente();
+			str = ordEsec.getCliente().getCodSistemaInfEsterno();
 		}
 		return str;
 	}

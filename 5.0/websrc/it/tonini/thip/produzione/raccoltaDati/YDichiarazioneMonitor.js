@@ -2,6 +2,7 @@ var oldRilevDatiPrdTSOL = RilevDatiPrdTSOL;
 
 RilevDatiPrdTSOL = function() {
 	oldRilevDatiPrdTSOL();
+
 	$(function() {
 		var table = $('#extraTable');
 
@@ -10,13 +11,38 @@ RilevDatiPrdTSOL = function() {
 
 		table.DataTable({
 			pageLength: 25,
-			stateSave: true,
+			stateSave: false,
 			stateLoadParams: function(settings, data) {
 				data.order = [[2, 'asc'], [8, 'asc']];
 			},
-			order: [[1, 'asc'], [7, 'asc']],
+			order: [[2, 'asc'], [8, 'asc']],
 			autoWidth: false,
-			language: { search: "Filtra:", zeroRecords: "Nessun risultato" }
+			language: { search: "Filtra:", zeroRecords: "Nessun risultato" },
+
+			initComplete: function() {
+				const api = this.api();
+
+				api.columns().every(function() {
+					const column = this;
+					const footerCell = column.footer();
+					if (!footerCell) return;
+
+					const title = footerCell.textContent.trim();
+
+					const input = document.createElement('input');
+					input.classList.add('input-filtri');
+					input.placeholder = title;
+
+					footerCell.replaceChildren(input);
+
+					input.addEventListener('keyup', function() {
+						const val = input.value;
+						if (column.search() !== val) {
+							column.search(val).draw();
+						}
+					});
+				});
+			}
 		});
 	});
-}
+};
