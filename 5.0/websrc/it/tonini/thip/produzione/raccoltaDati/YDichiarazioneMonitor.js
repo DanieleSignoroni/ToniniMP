@@ -24,6 +24,7 @@ RilevDatiPrdTSOL = function() {
 
 				api.columns().every(function() {
 					const column = this;
+					if(column.index() == 0 || (column.index() == column.row().table().columns().data().length -1)) return;
 					const footerCell = column.footer();
 					if (!footerCell) return;
 
