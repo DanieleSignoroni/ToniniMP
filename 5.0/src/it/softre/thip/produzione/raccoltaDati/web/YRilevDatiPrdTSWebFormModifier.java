@@ -12,6 +12,7 @@ import javax.servlet.jsp.JspWriter;
 
 import com.thera.thermfw.base.ResourceLoader;
 import com.thera.thermfw.base.Trace;
+import com.thera.thermfw.common.ErrorMessage;
 import com.thera.thermfw.persist.CachedStatement;
 import com.thera.thermfw.persist.KeyHelper;
 import com.thera.thermfw.persist.PersistentObject;
@@ -24,6 +25,14 @@ import it.thera.thip.base.azienda.Azienda;
 import it.thera.thip.base.azienda.Reparto;
 import it.thera.thip.base.generale.ParametroPsn;
 import it.thera.thip.base.risorse.Risorsa;
+import it.thera.thip.cs.ThipException;
+import it.thera.thip.magazzino.movimenti.MovimentoMagazzino;
+import it.thera.thip.magazzino.saldi.SaldoMag;
+import it.thera.thip.magazzino.saldi.SaldoMagLotto;
+import it.thera.thip.magazzino.saldi.SaldoMagLottoCommessa;
+import it.thera.thip.magazzino.saldi.SaldoMagLottoCommessaTM;
+import it.thera.thip.magazzino.saldi.SaldoMagLottoTM;
+import it.thera.thip.magazzino.saldi.SaldoMagTM;
 import it.thera.thip.produzione.ordese.AttivitaEsecMateriale;
 import it.thera.thip.produzione.ordese.AttivitaEsecRisorsa;
 import it.thera.thip.produzione.ordese.AttivitaEsecutiva;
@@ -185,8 +194,10 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		out.println(getHTMLTitoloDichInCorsoPers03()); //40458
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Risorsa")) + "</th>");
 		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(RilevDatiPrdTS.RES_FILE, "Qta_UM")) + "</th>");
+		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(YRilevDatiPrdTS.YRES_FILE, "Qta_Giac_MP")) + "</th>");
 		out.println(getHTMLTitoloDichInCorsoPers04()); //40458
 		out.println(getHTMLTitoloDichInCorsoPers05()); //40458
+		out.println("    <th class=\"cell\" >" + WebElement.formatStringForHTML(ResourceLoader.getString(YRilevDatiPrdTS.YRES_FILE, "Semp_Dsp")) + "</th>");
 		out.println("    <th class=\"cell\" >Azioni</th>");
 		out.println("  </tr>");
 		out.println("</thead><tbody>");
@@ -281,8 +292,10 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 				else{
 					out.println("    <td class=\"cell\" nowrap=\"true\" >" + qtaDaProdurre[0].intValue() + "</td>");
 				}
+				out.println(getHTMLCellaQtaGiacMP(index, testata.getAttivitaEsecutiva()));
 				out.println(getHTMLCellaDichInCorsoPers04(index, testata));		//Fix 22513
 				out.println(getHTMLCellaDichInCorsoPers05(index, testata));		//Fix 22513
+				out.println(getHTMLCellaSemaforoQtaProdurreGiacMat(index, testata.getAttivitaEsecutiva()));
 				if (testata.getStatoRilevazione() == RilevazioneDatiProdTes.IN_CORSO) {
 					out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);sospensioneAction(" + index + ")\" style="+ width +">" + sospensioneBut + "</button></td>"); //Fix 24211 //Fix 30236
 					out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);fineAction(" + index + ")\" style=" + width + ">" + fineBut + "</button></td>"); //Fix 13574 //Fix 30236
@@ -350,6 +363,169 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 		out.println("</td>");
 		out.println("</tr>");
 		out.println("</table>");
+	}
+
+	protected String getHTMLCellaSemaforoQtaProdurreGiacMat(int index, AttivitaEsecutiva attivitaEsecutiva) {
+		String srcImg = null;
+		BigDecimal[] qtaDaProdurre = RilevDatiPrdTS.calcolaQuantitaDaPorduire(attivitaEsecutiva);
+		char disp = calcolaSemaforoQtaProdurreGiacMat(attivitaEsecutiva, qtaDaProdurre[0]);
+		switch (disp) {
+		case 'R':
+			srcImg = "it/thera/thip/produzione/raccoltaDati/images/Red.gif";
+			break;
+		case 'V':
+			srcImg = "it/thera/thip/produzione/raccoltaDati/images/Green.gif";
+			break;
+		case 'G':
+			srcImg = "it/thera/thip/produzione/raccoltaDati/images/Yellow.gif";
+			break;
+		default:
+			srcImg = "it/thera/thip/produzione/raccoltaDati/images/Red.gif";
+			break;
+		}
+		return "    <td class=\"cell\"><img type=\"image\" name=\"\" src=\"" + srcImg + "\" alt=\"\" /><br>&nbsp</td>";
+	}
+
+	@SuppressWarnings("rawtypes")
+	public char calcolaSemaforoQtaProdurreGiacMat(AttivitaEsecutiva attivitaEsecutiva, BigDecimal qtaDaProdurre) {
+
+		if (qtaDaProdurre == null || qtaDaProdurre.compareTo(BigDecimal.ZERO) <= 0) {
+			return 'R';
+		}
+
+		BigDecimal producibileMax = null; // min dei producibili tra i materiali
+
+		Iterator iterMateriali = attivitaEsecutiva.getMateriali().iterator();
+		while (iterMateriali.hasNext()) {
+			AttivitaEsecMateriale materiale = (AttivitaEsecMateriale) iterMateriali.next();
+
+			BigDecimal fabbisognoUnitario = materiale.getCoeffImpiego();
+
+			if (fabbisognoUnitario == null || fabbisognoUnitario.compareTo(BigDecimal.ZERO) <= 0) {
+				continue; // oppure: return 'R';
+			}
+
+			BigDecimal giacenza = BigDecimal.ZERO;
+			try {
+				List saldi = getSaldiMag(
+						materiale.getIdAzienda(),
+						materiale.getIdMagazzinoPrl(),
+						materiale.getIdArticolo(),
+						materiale.getIdVersione(),
+						materiale.getIdConfigurazione(),
+						null, null,
+						MovimentoMagazzino.BASE
+						);
+
+				if (saldi != null && !saldi.isEmpty()) {
+					giacenza = ((SaldoMag) saldi.get(0)).getDatiSaldo().getQtaGiacenzaUMPrim();
+					if (giacenza == null) giacenza = BigDecimal.ZERO;
+				}
+			} catch (ThipException e) {
+				e.printStackTrace(Trace.excStream);
+				giacenza = BigDecimal.ZERO; // prudenziale
+			}
+
+			BigDecimal producibileDaQuesto = giacenza.divide(fabbisognoUnitario, 0, java.math.RoundingMode.FLOOR);
+
+			if (producibileMax == null || producibileDaQuesto.compareTo(producibileMax) < 0) {
+				producibileMax = producibileDaQuesto;
+			}
+		}
+
+		if (producibileMax == null) {
+			return 'R'; // nessun materiale valido
+		}
+
+		if (producibileMax.compareTo(qtaDaProdurre) >= 0) {
+			return 'V'; // verde: posso produrre tutto
+		} else if (producibileMax.compareTo(BigDecimal.ZERO) > 0) {
+			return 'G'; // giallo: posso produrre parzialmente
+		} else {
+			return 'R'; // rosso: non posso produrre
+		}
+	}
+
+	protected String getHTMLCellaQtaGiacMP(int index, AttivitaEsecutiva attivitaEsecutiva) {
+		BigDecimal qta = BigDecimal.ZERO;
+		qta = giacenzaMaterialePrincipale(attivitaEsecutiva);
+		return "<td id=\"QtaGiacMP" + index + "\" class=\"cell\" >" + WebElement.formatStringForHTML(getValue(qta.stripTrailingZeros(), 2))+"</td>";
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected BigDecimal giacenzaMaterialePrincipale(AttivitaEsecutiva attivitaEsecutiva) {
+		BigDecimal qta = BigDecimal.ZERO;
+		AttivitaEsecMateriale materiale = null;
+		Iterator iterMateriali = attivitaEsecutiva.getMateriali().iterator();
+		while(iterMateriali.hasNext()) {
+			AttivitaEsecMateriale atvEsecMat = (AttivitaEsecMateriale) iterMateriali.next();
+			if(atvEsecMat.getArticolo() != null 
+					&& atvEsecMat.getArticolo().getIdMacroFamiglia() != null
+					&& !idMacrofamigliaManici().equals(atvEsecMat.getArticolo().getIdMacroFamiglia())) {
+				materiale = atvEsecMat;
+			}
+		}
+		if(materiale != null) {
+			try {
+				List saldi = getSaldiMag(materiale.getIdAzienda(), materiale.getIdMagazzinoPrl(),
+						materiale.getIdArticolo(), materiale.getIdVersione(), materiale.getIdConfigurazione(), null, null, MovimentoMagazzino.BASE);
+				if(saldi != null && saldi.size() > 0) {
+					qta = ((SaldoMag)saldi.get(0)).getDatiSaldo().getQtaGiacenzaUMPrim();
+				}
+			} catch (ThipException e) {
+				e.printStackTrace(Trace.excStream);
+			}
+		}
+		return qta;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static List getSaldiMag(String idAzienda, String idMagazzino,
+			String idArticolo, Integer idVersione,
+			Integer idConfigurazione, String idLotto,
+			String idCommessa,char profondit‡Saldo) throws ThipException {
+
+		String where = SaldoMagTM.ID_AZIENDA + " = '" + idAzienda + "'";
+		where += " AND " + SaldoMagTM.ID_MAGAZZINO + " = '" + idMagazzino + "'";
+		where += " AND " + SaldoMagTM.ID_ARTICOLO + " = '" + idArticolo + "' ";
+
+		if (idVersione != null)
+			where += " AND " + SaldoMagTM.ID_VERSIONE + " = " + idVersione;
+
+		if (idConfigurazione != null)
+			where += " AND " + SaldoMagTM.ID_CONFIG + " = " + idConfigurazione;
+
+		if (idLotto != null) {
+			where += " AND " + SaldoMagLottoTM.ID_LOTTO + " = '" + idLotto +
+					"'";
+			profondit‡Saldo = MovimentoMagazzino.LOTTO;
+		}
+
+		if (idCommessa != null) {
+			where += " AND " + SaldoMagLottoCommessaTM.ID_COMMESSA + " = '" +
+					idCommessa + "'";
+			profondit‡Saldo = MovimentoMagazzino.COMMESSA;
+		}
+
+		List saldi = null;
+
+		try {
+			switch (profondit‡Saldo) {
+			case MovimentoMagazzino.BASE:
+				saldi = SaldoMag.retrieveList(where, "", false);
+				break;
+			case MovimentoMagazzino.LOTTO:
+				saldi = SaldoMagLotto.retrieveList(where, "", false);
+				break;
+			case MovimentoMagazzino.COMMESSA:
+				saldi = SaldoMagLottoCommessa.retrieveList(where, "", false);
+				break;
+			}
+		} catch (Exception e) {
+			e.printStackTrace(Trace.excStream);
+			throw new ThipException(new ErrorMessage("THIP_BS173"));
+		}
+		return saldi;
 	}
 
 	public Reparto trovaRepartoScelto(RilevDatiPrdTS bo) {
@@ -425,8 +601,10 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 				else{
 					out.println("    <td class=\"cell\" nowrap=\"true\" >" + qtaDaProdurre[0].intValue() +"</td>");
 				}
+				out.println(getHTMLCellaQtaGiacMP(index, listaAttivita.getAttivitaEsecutiva()));
 				out.println(getHTMLCellaProssimeDichPers04(index, listaAttivita));		//Fix 22513
 				out.println(getHTMLCellaProssimeDichPers05(index, listaAttivita));		//Fix 22513
+				out.println(getHTMLCellaSemaforoQtaProdurreGiacMat(index, listaAttivita.getAttivitaEsecutiva()));
 				out.println("    <td class=\"cell\" ><button onclick=\"setCurrentEvent(event);inizioAction(" + index + ")\" style=\"width: 117px\">" + but + "</button></td>");
 				out.println("<input type =\"hidden\" id=\"BollaLav" + index + "\" value='" + WebElement.formatStringForHTML(bollaLav) + "' />"); //Fix 14725
 				out.println("<input type =\"hidden\" id=\"IdArticolo" + index + "\" value='" + WebElement.formatStringForHTML(listaAttivita.getIdArticolo()) + "' />");
@@ -591,12 +769,14 @@ public class YRilevDatiPrdTSWebFormModifier extends RilevDatiPrdTSWebFormModifie
 
 	public Date getDataInizioRichiesta(AttivitaEsecutiva atv) {
 		Date dataInizioRcs = null;
-		//		if(atv.getDateProgrammate().getStartDate() != null)
-		//			dataInizioRcs = atv.getDateProgrammate().getStartDate();
-		//		else
-		//			dataInizioRcs = atv.getOrdineEsecutivo().getDateRichieste().getStartDate();
 		if(atv.getOrdineEsecutivo().getOrdineVenditaRiga() != null)
 			dataInizioRcs = atv.getOrdineEsecutivo().getOrdineVenditaRiga().getDataConsegnaConfermata();
+		if(dataInizioRcs == null) {
+			if(atv.getDateProgrammate().getEndDate() != null)
+				dataInizioRcs = atv.getDateProgrammate().getEndDate();
+			else
+				dataInizioRcs = atv.getOrdineEsecutivo().getDateRichieste().getEndDate();
+		}
 		return dataInizioRcs;
 	}
 
