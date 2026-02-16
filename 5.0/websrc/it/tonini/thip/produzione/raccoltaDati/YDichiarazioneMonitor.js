@@ -13,9 +13,9 @@ RilevDatiPrdTSOL = function() {
 			pageLength: 25,
 			stateSave: false,
 			stateLoadParams: function(settings, data) {
-				data.order = [[2, 'asc'], [8, 'asc']];
+				data.order = [[2, 'asc'], [9, 'asc']];
 			},
-			order: [[2, 'asc'], [8, 'asc']],
+			order: [[2, 'asc'], [9, 'asc']],
 			autoWidth: false,
 			language: { search: "Filtra:", zeroRecords: "Nessun risultato" },
 

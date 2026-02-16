@@ -29,18 +29,17 @@ public class YAzioneDichiarazioneTS extends AzioneDichiarazioneTS {
 
 	@Override
 	public String getUrlPers(ServletEnvironment se, RilevDatiPrdTS bo, String url) {
-		String urlPers = super.getUrlPers(se, bo, url);
+		url = super.getUrlPers(se, bo, url);
 		String action = se.getRequest().getParameter(ACTION);
 		if(url != null && url.indexOf("DichiarazioneMonitor.jsp") > 0 ){
-			urlPers = "it/tonini/thip/produzione/raccoltaDati/YFinestraDisambiguazioneReparto.jsp";
+			url = "it/tonini/thip/produzione/raccoltaDati/YFinestraDisambiguazioneReparto.jsp";
 			se.getRequest().setAttribute("Action", YRilevDatiPrdTSFormActionAdapter.FINESTRA_DISAMBIGUAZIONE_REPARTI);
-			se.getRequest().setAttribute("JspName", urlPers);
+			se.getRequest().setAttribute("JspName", url);
 		}else if(action != null && action.equals(YRilevDatiPrdTSFormActionAdapter.FINESTRA_DISAMBIGUAZIONE_SCELTA_OPERATORE)) {
-			urlPers = "it/thera/thip/produzione/raccoltaDati/DichiarazioneMonitor.jsp";
+			url = "it/thera/thip/produzione/raccoltaDati/DichiarazioneMonitor.jsp";
 			se.getRequest().setAttribute("Action", RilevDatiPrdTSFormActionAdapter.MONITOR);
-			se.getRequest().setAttribute("JspName", urlPers);
+			se.getRequest().setAttribute("JspName", url);
 		}
-		url = urlPers;
-		return urlPers;
+		return url;
 	}
 }
