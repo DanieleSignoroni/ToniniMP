@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE TDDML SYSTEM "../../../TDDML.dtd">
+<TDDML>
+  <!-- YAMBIENTI_PIAN (YAMBIEN): Ambiente pianificazione; -->
+  <CreateTable schema="THIPPERS" name="YAMBIENTI_PIAN" shortname="YAMBIEN">
+    <Column name="ID_AZIENDA" shortname="ID_AZIENDA" type="char" length="3" nullable="no"/>
+    <Column name="ID_AMBIENTE_PIAN" shortname="ID_AMBIENT" type="char" length="5" nullable="no"/>
+    <Column name="IMP_CNR_UDS" shortname="IMP_CNR_UDS" type="char" length="1" nullable="no" default="N"/>
+  </CreateTable>
+  <CreateIndex schema="THIPPERS" name="YAMBIENTI_PIAN_I01" tabschema="THIPPERS" tabname="YAMBIENTI_PIAN" shortname="YAMBIE_I01" unique="yes">
+    <IndexCol name="ID_AZIENDA" order="Asc"/>
+    <IndexCol name="ID_AMBIENTE_PIAN" order="Asc"/>
+  </CreateIndex>
+  <AlterTable schema="THIPPERS" name="YAMBIENTI_PIAN">
+    <AddPrimaryKey>
+      <PrimaryKey>
+        <ColumnRef name="ID_AZIENDA"/>
+        <ColumnRef name="ID_AMBIENTE_PIAN"/>
+      </PrimaryKey>
+    </AddPrimaryKey>
+  </AlterTable>
+  <Comment>
+    <CommentTable schema="THIPPERS" name="YAMBIENTI_PIAN" text="Ambiente pianificazione">
+      <CommentColumn name="ID_AZIENDA" text="IdAzienda"/>
+      <CommentColumn name="ID_AMBIENTE_PIAN" text="Codice ambiente"/>
+      <CommentColumn name="IMP_CNR_UDS" text="Impegni contenitori UDS"/>
+    </CommentTable>
+    <CommentIndex schema="THIPPERS" name="YAMBIENTI_PIAN_I01" text="Primary Key"/>
+  </Comment>
+  <Grant schema="THIPPERS" name="YAMBIENTI_PIAN"/>
+</TDDML>

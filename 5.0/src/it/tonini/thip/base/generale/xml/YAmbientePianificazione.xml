@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<customization>
+	<formcustomization customizePosition="ELEMENT"
+		customizeName="10" elementAD="OpIntegraOrdMan">
+		<!-- CUST_ADD </td> -->
+		<td valign="top">
+			<checkbox classAD="ImpegniContenitoriUDS"
+				name="ImpegniContenitoriUDS" />
+			<!-- CUST_START_REM -->
+		</td>
+		<!-- CUST_END_REM -->
+	</formcustomization>
+</customization>

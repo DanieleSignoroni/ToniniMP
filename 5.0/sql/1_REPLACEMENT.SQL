@@ -1,0 +1,6 @@
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('it.thera.thip.base.generale.AmbientePianificazione', 'it.tonini.thip.base.generale.YAmbientePianificazione', '0', 'N', 'N');
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('it.thera.thip.base.generale.AmbientePianificazioneTM', 'it.tonini.thip.base.generale.YAmbientePianificazioneTM', '0', 'N', 'N');
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('AmbientePianificazione', 'YAmbientePianificazione', '1', 'N', 'N');
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('it.thera.thip.produzione.pianifica.MRPLancio', 'it.tonini.thip.produzione.pianifica.YMRPLancio', '0', 'N', 'N');
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('LancioMRPBatch', 'YLancioMRPBatch', '1', 'N', 'N');
+    INSERT INTO <SCH>REPLACEMENT (ORIGINAL_NAME,REPLACING_NAME,TYPE,DISABLED,REPLACEMENT_APP) VALUES ('it.thera.thip.produzione.pianifica.EstrattoreMPS', 'it.thera.thip.produzione.pianifica.YEstrattoreMPS', '0', 'N', 'N');
